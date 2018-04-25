@@ -1,0 +1,87 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Magic 8 Ball</title>
+        <meta name="description" content="Ask the magic 8 ball a question. It will reach into the depths of the universe to provide an answer." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                background: #211F27;
+                font-family: Arial, Helvetica, sans-serif
+            }
+            #svg-goes-here {
+                text-align: center;
+            }
+            #question-form {
+                text-align: center;
+                padding: 32px;
+            }
+            #question {
+                width: 420px;
+                background: transparent;
+                border: none;
+                color: white;
+                outline: none;
+                padding: 8px;
+                font-size: 18pt;
+                border-bottom: solid 1px #ffffff;
+            }
+            #button {
+                background: #4CAF50;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                font-size: 18pt;
+                outline: none;
+            }
+            #button:hover {
+                background: #6fd673;
+                cursor: pointer;
+            }
+
+            .shake {
+                animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
+                transform: translate3d(0, 0, 0);
+                backface-visibility: hidden;
+                perspective: 1000px;
+            }
+
+            @keyframes shake {
+                10%, 90% {
+                    transform: translate3d(-4px, 0, 0);
+                }
+  
+                20%, 80% {
+                    transform: translate3d(8px, 0, 0);
+                }
+
+                30%, 50%, 70% {
+                    transform: translate3d(-16px, 0, 0);
+                }
+
+                40%, 60% {
+                    transform: translate3d(16px, 0, 0);
+                }
+            }
+
+            #triangle {
+            }
+
+            .shrink {
+                opacity: 0;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="svg-goes-here"></div>
+            <form id="question-form">
+                <input id="question" type="text" placeholder="Ask a question" autocomplete="false"/>
+                <input id="button" type="submit" value="Ask"/>
+            </form>
+        </div>
+        <script src="./responses.js"></script>
+        <script src="./magic-8-ball.js"></script>
+    </body>
+</html>

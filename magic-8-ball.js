@@ -49,6 +49,7 @@ function fillTextWithResponse(response) {
 function setupAskListener() {
     var form = document.getElementById('question-form');
     var question = document.getElementById('question');
+    question.focus(); // Force focus to the question on startup
 
     form.onsubmit = function(e) {
         e.preventDefault(); // stop the page from going anywhere
@@ -75,6 +76,8 @@ function setupAskListener() {
 
         var response = getRandomResponse();
         fillTextWithResponse(response);
+
+        question.focus(); // Return focus to the text field for continuous questions.
     }
 }
 

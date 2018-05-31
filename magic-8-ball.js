@@ -57,6 +57,7 @@ function setupAskListener() {
             return; // the user did not ask a question, return immediately
         }
 
+        var originalQuestion = question.value.trim();
         question.value = '' // clear the question text
 
         var ball = document.getElementById('svg-goes-here');
@@ -77,8 +78,39 @@ function setupAskListener() {
         var response = getRandomResponse();
         fillTextWithResponse(response);
 
+        storeResponse(originalQuestion, response);
+
         question.focus(); // Return focus to the text field for continuous questions.
     }
+}
+
+function storeResponse(question, answer) {
+    var accessToken = localStorage.getItem("mx_access_token");
+    var roomId = localStorage.getItem("mx_room_id");
+    var csApiUrl = localStorage.getItem("mx_csapi_url");
+
+    var txnId = new Date().getTime() + "-8ball";
+
+    var content = {
+        "msgtype": "m.text",
+        "body": question + "\n" + answer,
+        "format": "org.matrix.custom.html",
+        "formatted_body": "<b>" + question + "</b> " + answer,
+        "skills": {
+            "question": question,
+            "answer": answer,
+        },
+    };
+
+    $.ajax({
+        type: "PUT",
+        url: csApiUrl + "/_matrix/client/r0/rooms/" + roomId + "/send/m.room.message/" + txnId,
+        data: JSON.stringify(content),
+        beforeSend: function(xhr){
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+        },
+    }).then(() => console.log("question submitted"));
 }
 
 // run our code

@@ -19,6 +19,11 @@ var getSvgImage = function() {
     return svgContents;
 }
 
+// State variables so we know whether or not to disregard any answers we get over the websocket
+var currentQuestion = null;
+var questionTimer = null; // will be a timeout id
+var questionAnsweredCallback = null; // there must be a better way :(
+
 /*
  * Get a random response from our list of responses
  */
@@ -51,6 +56,9 @@ function setupAskListener() {
     var question = document.getElementById('question');
     question.focus(); // Force focus to the question on startup
 
+    // Setup our socket as an 8ball so we can ask questions
+    var socket = initSocket("8ball");
+
     form.onsubmit = function(e) {
         e.preventDefault(); // stop the page from going anywhere
         if (question.value.trim() == '') {
@@ -60,28 +68,57 @@ function setupAskListener() {
         var originalQuestion = question.value.trim();
         question.value = '' // clear the question text
 
+        // Submit the question
+        currentQuestion = originalQuestion;
+        socket.askQuestion(currentQuestion);
+        console.log("question: ", currentQuestion);
+
         var ball = document.getElementById('svg-goes-here');
         ball.className = 'shake'; // make the ball shake
 
         var triangle = document.getElementById('triangle');
         triangle.style.transition = 'all 0s';
         triangle.style.opacity = 0;
-
-        // remove the shake animation after 1s so it can be
-        // added again for a different question
-        setTimeout(function() { 
+        
+        questionAnsweredCallback = () => {
+            // remove the shake animation so it can be added again for a different question
             ball.className = '';
             triangle.style.transition = 'all 3s';
             triangle.style.opacity = 1;
-        }, 1000);
 
-        var response = getRandomResponse();
-        fillTextWithResponse(response);
+            // Return focus to the text field for continuous questions.
+            question.focus(); 
+        };
 
-        storeResponse(originalQuestion, response);
-
-        question.focus(); // Return focus to the text field for continuous questions.
+        if (clientCounts["answerer"] > 0) {
+            // we set a timeout to ignore answers in the event that the answerer went AFK
+            questionTimer = setTimeout(function() {
+                onAnswer(getRandomResponse());
+            }, 15000); // 15 seconds should be enough?
+        } else {
+            // There's no one available, so we'll just automatically answer it ourselves
+            setTimeout(function() {
+                onAnswer(getRandomResponse());
+            }, 1000);
+        }
     }
+}
+
+// Required by the socket.io framework we have
+function onAnswer(answer) {
+    if (!currentQuestion) {
+        console.warn("Disregarding answer: ", answer);
+        return;
+    }
+
+    console.log("answer: ", answer);
+    fillTextWithResponse(answer); // display the answer
+    storeResponse(currentQuestion, answer); // record what the answer was
+    currentQuestion = null; // clear our 'waiting for answer' flag
+    clearTimeout(questionTimer); // cancel our automatic reply timeout
+
+    // call the callback, if any
+    if (questionAnsweredCallback) questionAnsweredCallback();
 }
 
 function storeResponse(question, answer) {

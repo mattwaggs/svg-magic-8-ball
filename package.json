@@ -1,0 +1,13 @@
+{
+  "name": "svg-magic-8-ball",
+  "version": "1.0.0",
+  "description": "",
+  "main": "magic-8-ball.js",
+  "scripts": {
+    "app": "node app/index.js"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
+  }
+}

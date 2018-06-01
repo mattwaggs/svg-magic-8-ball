@@ -39,7 +39,7 @@ function onQuestion(question) {
 
     questionTimer = setTimeout(function() {
         questionEl.className = 'timeout';
-    }, 15000); // We just kinda assume you have 15 seconds
+    }, 8000); // We just kinda assume you have 8 seconds
 }
 
 function escapeHtml(unsafe) {

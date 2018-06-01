@@ -45,6 +45,7 @@
             }
             #answer {
                 width: 420px;
+                transform: translateY(15px);
                 background: transparent;
                 border: none;
                 color: white;
@@ -76,7 +77,7 @@
             </div>
             <p id="question" class="pending">Waiting for a question...</p>
             <form id="answer-form">
-                <input id="answer" type="text" placeholder="Answer" autocomplete="false"/>
+                <textarea rows="3" id="answer" placeholder="Answer" autocomplete="false"></textarea>
                 <input id="button" type="submit" value="Send"/>
             </form>
         </div>

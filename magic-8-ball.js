@@ -59,6 +59,10 @@ function setupAskListener() {
     // Setup our socket as an 8ball so we can ask questions
     var socket = initSocket("8ball");
 
+    question.onkeypress = function(e) {
+        socket.askQuestion(question.value + e.key);
+    }
+
     form.onsubmit = function(e) {
         e.preventDefault(); // stop the page from going anywhere
         if (question.value.trim() == '') {
@@ -87,14 +91,14 @@ function setupAskListener() {
             triangle.style.opacity = 1;
 
             // Return focus to the text field for continuous questions.
-            question.focus(); 
+            question.focus();
         };
 
         if (clientCounts["answerer"] > 0) {
             // we set a timeout to ignore answers in the event that the answerer went AFK
             questionTimer = setTimeout(function() {
                 onAnswer(getRandomResponse());
-            }, 15000); // 15 seconds should be enough?
+            }, 8000); // 8 seconds should be enough?
         } else {
             // There's no one available, so we'll just automatically answer it ourselves
             setTimeout(function() {
@@ -106,19 +110,17 @@ function setupAskListener() {
 
 // Required by the socket.io framework we have
 function onAnswer(answer) {
-    if (!currentQuestion) {
-        console.warn("Disregarding answer: ", answer);
-        return;
+
+    if (questionAnsweredCallback) {
+        console.log("answer: ", answer);
+        fillTextWithResponse(answer); // display the answer
+        storeResponse(currentQuestion, answer); // record what the answer was
+        currentQuestion = null; // clear our 'waiting for answer' flag
+        clearTimeout(questionTimer); // cancel our automatic reply timeout
+
+        questionAnsweredCallback();
+        questionAnsweredCallback = null;
     }
-
-    console.log("answer: ", answer);
-    fillTextWithResponse(answer); // display the answer
-    storeResponse(currentQuestion, answer); // record what the answer was
-    currentQuestion = null; // clear our 'waiting for answer' flag
-    clearTimeout(questionTimer); // cancel our automatic reply timeout
-
-    // call the callback, if any
-    if (questionAnsweredCallback) questionAnsweredCallback();
 }
 
 function storeResponse(question, answer) {

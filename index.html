@@ -40,7 +40,7 @@
             }
 
             .shake {
-                animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
+                animation: shake 1s cubic-bezier(.36,.07,.19,.97) both infinite;
                 transform: translate3d(0, 0, 0);
                 backface-visibility: hidden;
                 perspective: 1000px;
@@ -96,6 +96,8 @@
             </form>
         </div>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" type="text/javascript"></script>
+        <script src="./websocket-8ball.js"></script>
         <script src="./responses.js"></script>
         <script src="./magic-8-ball.js"></script>
     </body>
